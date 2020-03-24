@@ -9,7 +9,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var db *sql.DB
+// DB - embeds the *sql.DB
+// so we can use it's methods
+type DB struct {
+	*sql.DB
+}
 
 // Error Model
 type Error struct {
@@ -18,8 +22,8 @@ type Error struct {
 
 func main() {
 	UserModel.initialiseTable()
-	users := UserModel.getTableData()
-	fmt.Println(users)
+	d := UserRepo.getTableData()
+	fmt.Println(d)
 
 	router := mux.NewRouter()
 

@@ -15,26 +15,26 @@ type UserDTO struct {
 	password string
 }
 
+var users = []UserDTO{}
+
+// UserModel - user model instance
+var UserModel = &User{}
+
+// UserRepo - for data store access
+var UserRepo = NewModel(User{})
+
+// ModelDTO implementation MUST have this
 func (user UserDTO) getID() string {
 	return user.id
 }
 
-// TODO: make the "users" variable private
-// declare the value to holder table collections
-var users []UserDTO = []UserDTO{}
-
-// UserModel instance
-var UserModel User = User{}
-
-// This method MUST be implemented by an object
-// to be qualified as a [Model]
-func (user User) getTableData() []UserDTO {
-	return users
+// ModelDTO implementation MUST have this
+func (u User) getTableData() interface{} {
+	return &users
 }
 
-// This method MUST be implemented by an object
-// to be qualified as a [Model]
-func (user User) getTableName() string {
+// Model implementation MUST have this
+func (User) getTableName() string {
 	return "users"
 }
 

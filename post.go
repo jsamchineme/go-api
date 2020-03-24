@@ -10,7 +10,7 @@ type Post struct {
 
 var posts []Post
 
-func (post Post) getTableData() []Post {
+func (Post) getTableData() []Post {
 	return posts
 }
 
