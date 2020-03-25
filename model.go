@@ -13,18 +13,30 @@ type TableReader interface {
 }
 
 // ModelDTO - the data transfer object for a model
-type ModelDTO interface {
+type ModelDTO struct {
+	IsDTO
+}
+
+// IsDTO marks an object as DTO
+type IsDTO interface {
 	getID() string
 }
 
-// NewModel - Factory for generating models
+// NewModel - factory for generating models
 func NewModel(t TableReader) Model {
 	return Model{t}
+}
+
+// MakeDTO - factory to generate a ModelDTO
+func MakeDTO(t IsDTO) ModelDTO {
+	return ModelDTO{t}
 }
 
 // CreateRecord is used to insert a new row into a table
 func (m Model) CreateRecord(d ModelDTO) (ModelDTO, error) {
 	rows := m.getTableData().([]ModelDTO)
+
+	// update the rows for the model's table
 	rows = append(rows, d)
 
 	return d, nil

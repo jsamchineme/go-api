@@ -15,7 +15,7 @@ type UserDTO struct {
 	password string
 }
 
-var users = []UserDTO{}
+var users = &[]ModelDTO{}
 
 // UserModel - user model instance
 var UserModel = &User{}
@@ -23,14 +23,14 @@ var UserModel = &User{}
 // UserRepo - for data store access
 var UserRepo = NewModel(User{})
 
-// ModelDTO implementation MUST have this
+// Model.isDTO implementation MUST have this
 func (user UserDTO) getID() string {
 	return user.id
 }
 
-// ModelDTO implementation MUST have this
+// Model implementation MUST have this
 func (u User) getTableData() interface{} {
-	return &users
+	return *users
 }
 
 // Model implementation MUST have this
@@ -38,8 +38,13 @@ func (User) getTableName() string {
 	return "users"
 }
 
+func makeDTO(t UserDTO) ModelDTO {
+	return ModelDTO{t}
+}
+
 func (User) initialiseTable() {
-	users = []UserDTO{
+
+	dummy := []UserDTO{
 		UserDTO{
 			id:       uuid.New().String(),
 			email:    "jsamchineme@example.test",
@@ -60,15 +65,18 @@ func (User) initialiseTable() {
 	// to update a property of "user" by refering to it like so - "for i, user := range users" would not work
 	// because range creates a copy of the user item from the splice,
 	// hence the syntax below - user := &users[i], this user value is now a pointer that can be updated
-	for i := range users {
+
+	for _, user := range dummy {
 		// There's the need to wrap this block within the type assertion for User
 		// because each user is seen as an Entity type
 		// Wrapping the code in the assertion block makes it so that the "u" variable refers to a User type
 		// which will then make field password, email accessible
-		user := &users[i]
-
 		hashedPassword, _ := HashPassword(user.password)
-
-		user.password = string(hashedPassword)
+		userData := MakeDTO(UserDTO{
+			id:       uuid.New().String(),
+			password: hashedPassword,
+			email:    "jsamchineme@gmail.com",
+		})
+		UserRepo.CreateRecord(userData)
 	}
 }

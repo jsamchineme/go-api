@@ -48,11 +48,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 // Signup - user signup handler
 func Signup(w http.ResponseWriter, r *http.Request) {
 	hashedPassword, _ := HashPassword("password")
-	userData := UserDTO{
+	userData := MakeDTO(UserDTO{
 		id:       uuid.New().String(),
 		password: hashedPassword,
 		email:    "jsamchineme@gmail.com",
-	}
+	})
 
 	u, err := UserRepo.CreateRecord(userData)
 	if err != nil {
@@ -60,7 +60,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("NewUser\n", u)
+	fmt.Println("NewUser\n", u, UserModel.getTableData())
 }
 
 // TokenVerifyMiddleware handles token verification
