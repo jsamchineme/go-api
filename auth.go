@@ -60,8 +60,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	usrd := UserModel.getTableData().([]ModelDTO)
-	fmt.Println("Users\n", usrd)
+	rows := UserModel.getTableData()
+	fmt.Println("Users\n", rows)
 }
 
 // TokenVerifyMiddleware handles token verification

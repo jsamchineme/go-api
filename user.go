@@ -29,13 +29,18 @@ func (user UserDTO) getID() string {
 }
 
 // Model implementation MUST have this
-func (u User) getTableData() interface{} {
+func (u User) getTableData() []ModelDTO {
 	return users
 }
 
 // Model implementation MUST have this
 func (User) getTableName() string {
 	return "users"
+}
+
+// Model implementation MUST have this
+func (User) setTableData(data []ModelDTO) {
+	users = data
 }
 
 func makeDTO(t UserDTO) ModelDTO {
@@ -70,6 +75,5 @@ func (User) initialiseTable() {
 			password: hashedPassword,
 		})
 		UserRepo.CreateRecord(d)
-		// users = append(users, d)
 	}
 }

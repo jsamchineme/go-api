@@ -9,7 +9,8 @@ type Model struct {
 // TableReader setups a table for managing a Model's data
 type TableReader interface {
 	getTableName() string
-	getTableData() interface{}
+	getTableData() []ModelDTO
+	setTableData([]ModelDTO)
 }
 
 // ModelDTO - the data transfer object for a model
@@ -34,8 +35,9 @@ func MakeDTO(t IsDTO) ModelDTO {
 
 // CreateRecord is used to insert a new row into a table
 func (m Model) CreateRecord(d ModelDTO) (ModelDTO, error) {
-	rows := m.getTableData().([]ModelDTO)
+	rows := m.getTableData()
 	rows = append(rows, d)
+	m.setTableData(rows)
 
 	return d, nil
 }
