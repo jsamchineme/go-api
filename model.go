@@ -35,12 +35,7 @@ func MakeDTO(t IsDTO) ModelDTO {
 // CreateRecord is used to insert a new row into a table
 func (m Model) CreateRecord(d ModelDTO) (ModelDTO, error) {
 	rows := m.getTableData().([]ModelDTO)
-
-	// update the rows for the model's table
 	rows = append(rows, d)
 
 	return d, nil
-}
-
-func (m Model) setTableData(d interface{}) {
 }

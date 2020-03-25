@@ -54,13 +54,14 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		email:    "jsamchineme@gmail.com",
 	})
 
-	u, err := UserRepo.CreateRecord(userData)
+	_, err := UserRepo.CreateRecord(userData)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println("NewUser\n", u, UserModel.getTableData())
+	usrd := UserModel.getTableData().([]ModelDTO)
+	fmt.Println("Users\n", usrd)
 }
 
 // TokenVerifyMiddleware handles token verification
