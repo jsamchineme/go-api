@@ -4,7 +4,7 @@ import "github.com/google/uuid"
 
 // Post Model
 type Post struct {
-	id      uuid.UUID
+	id      string
 	content string
 }
 
@@ -23,11 +23,11 @@ func (post Post) getTableName() string {
 func (post Post) initialiseTable() {
 	posts = []Post{
 		Post{
-			id:      uuid.New(),
+			id:      uuid.New().String(),
 			content: "sample post 1",
 		},
 		Post{
-			id:      uuid.New(),
+			id:      uuid.New().String(),
 			content: "sample post 2",
 		},
 	}

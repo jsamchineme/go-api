@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -48,19 +47,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 // Signup - user signup handler
 func Signup(w http.ResponseWriter, r *http.Request) {
 	hashedPassword, _ := HashPassword("password")
-	userData := MakeDTO(UserDTO{
+	userData := UserDTO{
 		id:       uuid.New().String(),
 		password: hashedPassword,
 		email:    "jsamchineme@gmail.com",
-	})
+	}
 
-	_, err := UserRepo.CreateRecord(userData)
+	_, err := UserRepo.createRecord(userData)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	rows := UserModel.getTableData()
+	rows := UserRepo.getTableData()
 	fmt.Println("Users\n", rows)
 }
 

@@ -34,7 +34,7 @@ func main() {
 }
 
 func setupDB() {
-	UserModel.initialiseTable()
+	UserRepo.initialiseTable()
 	d := UserRepo.getTableData()
 
 	fmt.Println("\nUsers:\n\n", d)
