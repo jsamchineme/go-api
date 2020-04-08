@@ -17,29 +17,59 @@ type UserDTO struct {
 
 var users = []UserDTO{}
 
-// UserModel - user model instance
-var UserModel = &User{}
+type fieldList struct {
+	id       string
+	email    string
+	password string
+}
+
+var tableFields = fieldList{
+	id:       "id",
+	email:    "email",
+	password: "password",
+}
 
 // UserRepo - for data store access
-var UserRepo = NewModel(User{})
+var UserRepo = &User{}
 
-// ModelDTO implementation MUST have this
-func (user UserDTO) getID() string {
-	return user.id
+func (u User) updateDTO(record UserDTO, data UserDTO) UserDTO {
+	newData := UserDTO{}
+	fields := []string{"email", "password"}
+
+	for _, field := range fields {
+		switch field {
+		case "email":
+			if data.email != "" {
+				newData.email = data.email
+			} else {
+				newData.email = record.email
+			}
+		case "password":
+			if data.password != "" {
+				newData.password = data.password
+			} else {
+				newData.password = record.password
+			}
+		}
+	}
+
+	return newData
 }
 
-// ModelDTO implementation MUST have this
-func (u User) getTableData() interface{} {
-	return &users
+func (u User) getTableData() []UserDTO {
+	return users
 }
 
-// Model implementation MUST have this
 func (User) getTableName() string {
 	return "users"
 }
 
+func (User) setTableData(data []UserDTO) {
+	users = data
+}
+
 func (User) initialiseTable() {
-	users = []UserDTO{
+	seed := []UserDTO{
 		UserDTO{
 			id:       uuid.New().String(),
 			email:    "jsamchineme@example.test",
@@ -57,18 +87,41 @@ func (User) initialiseTable() {
 		},
 	}
 
-	// to update a property of "user" by refering to it like so - "for i, user := range users" would not work
-	// because range creates a copy of the user item from the splice,
-	// hence the syntax below - user := &users[i], this user value is now a pointer that can be updated
-	for i := range users {
-		// There's the need to wrap this block within the type assertion for User
-		// because each user is seen as an Entity type
-		// Wrapping the code in the assertion block makes it so that the "u" variable refers to a User type
-		// which will then make field password, email accessible
-		user := &users[i]
-
+	for i := range seed {
+		user := seed[i]
 		hashedPassword, _ := HashPassword(user.password)
 
-		user.password = string(hashedPassword)
+		d := UserDTO{
+			id:       user.id,
+			email:    user.email,
+			password: hashedPassword,
+		}
+
+		UserRepo.createRecord(d)
+		UserRepo.updateRecord(d)
 	}
+}
+
+// CreateRecord is used to insert a new row into a table
+func (u User) createRecord(d UserDTO) (UserDTO, error) {
+	rows := u.getTableData()
+	rows = append(rows, d)
+	u.setTableData(rows)
+
+	return d, nil
+}
+
+// UpdateRecord update a record
+func (u User) updateRecord(d UserDTO) (UserDTO, error) {
+	rows := []UserDTO{}
+	for _, record := range u.getTableData() {
+		if d.id == record.id {
+			updatedDTO := u.updateDTO(record, d)
+			rows = append(rows, updatedDTO)
+			continue
+		}
+		rows = append(rows, d)
+	}
+	u.setTableData(rows)
+	return d, nil
 }

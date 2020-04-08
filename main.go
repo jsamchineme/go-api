@@ -21,9 +21,7 @@ type Error struct {
 }
 
 func main() {
-	UserModel.initialiseTable()
-	d := UserRepo.getTableData()
-	fmt.Println(d)
+	setupDB()
 
 	router := mux.NewRouter()
 
@@ -33,6 +31,13 @@ func main() {
 
 	log.Println("Listen on port 8000...")
 	log.Fatal(http.ListenAndServe(":8000", router))
+}
+
+func setupDB() {
+	UserRepo.initialiseTable()
+	d := UserRepo.getTableData()
+
+	fmt.Println("\nUsers:\n\n", d)
 }
 
 func protectedEndpoint(w http.ResponseWriter, r *http.Request) {

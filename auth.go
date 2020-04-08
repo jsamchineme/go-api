@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -54,13 +53,14 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		email:    "jsamchineme@gmail.com",
 	}
 
-	u, err := UserRepo.CreateRecord(userData)
+	_, err := UserRepo.createRecord(userData)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println("NewUser\n", u)
+	rows := UserRepo.getTableData()
+	fmt.Println("Users\n", rows)
 }
 
 // TokenVerifyMiddleware handles token verification
